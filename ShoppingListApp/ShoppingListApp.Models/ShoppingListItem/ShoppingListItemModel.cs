@@ -34,5 +34,7 @@ namespace ShoppingListApp.Models
         public DateTimeOffset CreatedUTC { get; set; }
 
         public DateTimeOffset? ModifiedUTC { get; set; }
+
+        public string HexColor { get; set; }
     }
 }

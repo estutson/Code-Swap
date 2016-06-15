@@ -14,6 +14,7 @@ namespace ShoppingList.Web.Controllers
     public class ShoppingListItemAppController : Controller
     {
         private readonly Lazy<ShoppingListItemAppService> _svc;
+        private readonly Lazy<ShoppingListAppService> _shoppingListAppService;
 
         public ShoppingListItemAppController()
         {
@@ -23,6 +24,14 @@ namespace ShoppingList.Web.Controllers
                     {
                         return new ShoppingListItemAppService();
                     });
+
+            _shoppingListAppService = 
+                new Lazy<ShoppingListAppService>(
+                    () =>
+                    {
+                        var userId = Guid.Parse(User.Identity.GetUserId());
+                        return new ShoppingListAppService(userId);
+                    });
         }
 
         public ActionResult Index(string sortOrder, string curentFilter, int id)
@@ -31,38 +40,42 @@ namespace ShoppingList.Web.Controllers
             ViewBag.ContentsSortOrder = String.IsNullOrEmpty(sortOrder) ? "ContentsDesc" : "";
             ViewBag.PrioritySortOrder = sortOrder == "Priority" ? "PriorityDesc" : "Priority";
             ViewBag.IsCheckedSortOrder = sortOrder == "IsChecked" ? "IsCheckedDesc" : "IsChecked";
+            
+            // Get shopping list items
+            var shoppingListItems = _svc.Value.GetItems(id);
 
+            // Get the color theme of the shopping list and apply to items.
+            var shoppingList = _shoppingListAppService.Value.GetListById(id);
+            var color = shoppingList.Color;
+            foreach (var item in shoppingListItems)
+            {
+                item.HexColor = color;
+            }
 
-
-
-            var ShoppingListItems = _svc.Value.GetItems(id);
-
-            var shoppingListItems = from items in ShoppingListItems
-                                    select items;
-            //Sorting
+            //Sorting 
             switch (sortOrder)
             {
                 case "ContentsDesc":
-                    ShoppingListItems = ShoppingListItems.OrderByDescending(s => s.Contents);
+                    shoppingListItems = shoppingListItems.OrderByDescending(s => s.Contents);
                     break;
                 case "Priority":
-                    ShoppingListItems = ShoppingListItems.OrderBy(s => s.Priority);
+                    shoppingListItems = shoppingListItems.OrderBy(s => s.Priority);
                     break;
                 case "PriorityDesc":
-                    ShoppingListItems = ShoppingListItems.OrderByDescending(s => s.Priority);
+                    shoppingListItems = shoppingListItems.OrderByDescending(s => s.Priority);
                     break;
                 case "IsChecked":
-                    ShoppingListItems = ShoppingListItems.OrderBy(s => s.IsChecked);
+                    shoppingListItems = shoppingListItems.OrderBy(s => s.IsChecked);
                     break;
                 case "IsCheckedDesc":
-                    ShoppingListItems = ShoppingListItems.OrderByDescending(s => s.IsChecked);
+                    shoppingListItems = shoppingListItems.OrderByDescending(s => s.IsChecked);
                     break;
                 default:
-                    ShoppingListItems = ShoppingListItems.OrderBy(s => s.Contents);
+                    shoppingListItems = shoppingListItems.OrderBy(s => s.Contents);
                     break;
             }
 
-            return View(ShoppingListItems);
+            return View(shoppingListItems);
 
         }
 

@@ -48,8 +48,11 @@ namespace ShoppingListApp.Services
                         .SingleOrDefault(e => e.Id == Eid && e.ShoppingListId == Sid);
             }
 
-            return
-                new ShoppingListItemModel
+
+
+            return entity == null
+                ? null
+                : new ShoppingListItemModel
                 {
                     Id = entity.Id,
                     ShoppingListId = entity.ShoppingListId,
@@ -88,17 +91,13 @@ namespace ShoppingListApp.Services
         {
             using (var ctx = new ShoppingListDbContext())
             {
-                var entity =
+                var item =
                     ctx
                         .ShoppingListItem
                         .Single(e => e.ShoppingListId == Sid && e.Id == Eid);
 
-                foreach (var file in entity.Files.ToArray())
-                {
-                    ctx.Files.Remove(file);
-
-                }
-                ctx.ShoppingListItem.Remove(entity);
+                ctx.Files.RemoveRange(item.Files);
+                ctx.ShoppingListItem.Remove(item);
 
                 ctx.SaveChanges();
             }
@@ -137,18 +136,23 @@ namespace ShoppingListApp.Services
             }
         }
 
-        public void DeleteAllChecked(int[] IdsToBeDeleted)
+        public void DeleteAllChecked(int[] ids)
         {
+            if(ids == null || ids.Length == 0)
+            {
+                return;
+            }
+
             using (var ctx = new ShoppingListDbContext())
             {
-                foreach(var item in ctx.ShoppingListItem)
+                var shoppingListItems = ctx.ShoppingListItem.Where(item => ids.Contains(item.Id)).ToArray();
+
+                foreach (var item in shoppingListItems)
                 {
-                    foreach(var id in IdsToBeDeleted)
-                    {
-                        if (item.Id == id)
-                            ctx.ShoppingListItem.Remove(item);
-                    }
+                    ctx.Files.RemoveRange(item.Files);
                 }
+
+                ctx.ShoppingListItem.RemoveRange(shoppingListItems);
 
                 ctx.SaveChanges();
             }
