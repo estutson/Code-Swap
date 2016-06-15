@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ShoppingListApp.Models.NoteModel>
+
+@{
+    ViewBag.Title = "Notes";
+}
+
+<link href="@Url.Content("~/Content/TablesForIndex.css")" rel="stylesheet" type="text/css" />
+
+<div id="Title">
+    <h2>Notes</h2>
+</div>
+
+<div id="buttons">
+    <button type="button">@Html.ActionLink("Add Note", "Create", new { Id = Url.RequestContext.RouteData.Values["id"] })</button>
+    @*<button type="button">@Html.ActionLink("Delete all notes in DB", "DeleteAllNotes")</button>*@
+</div>
+
+<hr id="hrthing" />​
+
+<table class="table">
+    <tr id="tableheader">
+        <th>
+            @Html.DisplayNameFor(model => model.Body)
+        </th>
+        <th>Options</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr id="tableitems">
+        <td>
+            @Html.DisplayFor(modelItem => item.Body)
+        </td>
+        <td>
+            <button type="button">@Html.ActionLink("Delete", "Delete", new { id = item.Id, ShoppingListItemId = item.ShoppingListItemId })</button> |
+            <button type="button">@Html.ActionLink("Edit", "Edit", new { Id = item.Id, ShoppingListItemId = item.ShoppingListItemId })</button>
+        </td>
+    </tr>
+}
+
+</table>

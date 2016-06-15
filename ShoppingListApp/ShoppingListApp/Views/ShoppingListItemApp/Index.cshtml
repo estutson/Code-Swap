@@ -1,0 +1,93 @@
+﻿@model IEnumerable<ShoppingListApp.Models.ShoppingListItemModel>
+
+@{
+    ViewBag.Title = "Shopping List Items";
+}
+
+<link href="@Url.Content("~/Content/TablesForIndex.css")" rel="stylesheet" type="text/css" />
+
+<div id="Title">
+    <h2>Shopping List Items</h2>
+</div>
+
+<div id="buttons">
+    <button type="button">@Html.ActionLink("Add New Item", "Create", new { Id = Url.RequestContext.RouteData.Values["id"] })</button>
+    @*<button type="button" onclick="return confirm('Are you sure you wish to delete all items in DB?')">@Html.ActionLink("Delete all items in DB", "DeleteAllItems", new { Id = Url.RequestContext.RouteData.Values["id"] })</button>*@
+    <button type="button" onclick="javascript: (function () { document.tableForm.submit(); return void (0); })(); return confirm('Are you sure you wish to delete the selected items?')">Delete Selected</button>
+</div>
+
+<hr id="hrthing"/>​
+
+@{ Html.BeginForm("DeleteAllChecked/" + Url.RequestContext.RouteData.Values["id"].ToString(), "ShoppingListItemApp", FormMethod.Post, new { name = "tableForm" }); }
+    <table class="table">
+        <tr id="tableheader">
+            <th>
+                <input type="checkbox" id="checkBoxAll" />
+            </th>
+            <th>
+                @Html.ActionLink("Contents", "Index", new { sortOrder = ViewBag.ContentsSortOrder, currentFilter = ViewBag.CurrentFilter, id = Url.RequestContext.RouteData.Values["id"] })
+            </th>
+            <th>
+                @Html.ActionLink("Priority", "Index", new { sortOrder = ViewBag.PrioritySortOrder, currentFilter = ViewBag.CurrentFilter, id = Url.RequestContext.RouteData.Values["id"] })
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            ViewBag.Id = item.ShoppingListId;
+            <tr id="tableitems">
+                <td>
+                    <input type="checkbox" name="IdsToBeDeleted" class="chkCheckBoxId" value="@item.Id"/>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Contents)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Priority)
+                </td>
+                <td>
+                    <button type="button">@Html.ActionLink("Delete", "Delete", new { Id = item.Id, ShoppingListId = item.ShoppingListId })</button> |
+                    <button type="button">@Html.ActionLink("Edit", "Edit", new { Id = item.Id, ShoppingListId = item.ShoppingListId })</button>
+                    <button type="button">@Html.ActionLink("Show Notes", "Index", "Notes", new { Id = item.Id }, null)</button>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    @{ Html.EndForm(); }
+
+
+@section scripts {
+    <script language="javascript" type="text/javascript">
+        //$(document).ready(function () {
+        //    $("i[data-toggle='check-box']")
+        //        .css({ "cursor": "pointer" })
+        //        .click(function (e) {
+        //            var target = $(e.target);
+        //            var itemId = target.attr("data-id");
+        //            var checkedSet = target.hasClass("check-box");
+
+        //            $.ajax({
+        //                method: checkedSet ? "DELETE" : "POST",
+        //                url: "/api/Item/" + itemId + "/Checked",
+        //                data: null
+        //            })
+        //            .done(function (r) { target.removeClass(); target.addClass("checkbox " + (checkedSet ? "check-box" : "checked")); })
+        //            .fail(function (r) { alert("Failed to change checked status"); });
+        //        });
+        //});
+
+        $(document).ready(function () {
+            $('#checkBoxAll').click(function () {
+                if ($(this).is(":checked"))
+                    $('.chkCheckBoxId').prop('checked', true);
+                else
+                    $('.chkCheckBoxId').prop('checked', false);
+            });
+
+
+        });
+</script>
+}

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<ShoppingListApp.Models.ShoppingListModel>
+
+@{
+    ViewBag.Title = "Shopping Lists";
+}
+
+<link href="@Url.Content("~/Content/TablesForIndex.css")" rel="stylesheet" type="text/css" />
+
+<div id="Title">
+    <h2>Shopping Lists</h2>
+</div>
+
+<div id="buttons">
+    <button type="button">@Html.ActionLink("Add List", "Create")</button>
+    <button type="button">@Html.ActionLink("Add List Template", "CreateListTemplate")</button>
+    @*<button type="button">@Html.ActionLink("Delete all lists in DB", "DeleteAllLists")</button>*@
+</div>
+
+<hr id="hrthing"/>​
+
+<table class="table">
+    <tr id="tableheader">
+        <th>
+            @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortOrder, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Color", "Index", new { sortOrder = ViewBag.ColorSortOrder, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            Options
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr id="tableitems" style="color:@item.Color">
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Color)
+        </td>
+        <td style="border: 1px solid black;  text-align: center">
+            <button type="button">@Html.ActionLink("Show", "Index", "ShoppingListItemApp", new { id = item.Id }, null)</button> |
+            <button type="button">@Html.ActionLink("Delete", "Delete", new { id = item.Id })</button> |
+            <button type="button">@Html.ActionLink("Edit", "Edit", new { id = item.Id })</button>
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,20 @@
+namespace ShoppingListApp.Data.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class test1 : DbMigration
+    {
+        public override void Up()
+        {
+            DropColumn("dbo.ShoppingListItem", "CreatedUTC");
+            DropColumn("dbo.ShoppingListItem", "ModifiedUTC");
+        }
+        
+        public override void Down()
+        {
+            AddColumn("dbo.ShoppingListItem", "ModifiedUTC", c => c.DateTimeOffset(precision: 7));
+            AddColumn("dbo.ShoppingListItem", "CreatedUTC", c => c.DateTimeOffset(nullable: false, precision: 7));
+        }
+    }
+}

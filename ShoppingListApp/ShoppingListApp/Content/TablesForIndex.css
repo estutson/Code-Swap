@@ -1,0 +1,40 @@
+﻿#Title
+{
+    display: inline-block;
+}
+
+#buttons
+{
+    display: inline-block; 
+    float: right; 
+    padding-top: 2.2%;
+}
+
+#hrthing
+{
+    border: 1px solid #0026ff;
+}
+
+#tableheader
+{
+    background-color: #808080;  
+    border: 1px solid black;
+}
+
+th
+{
+    border: 1px solid black;
+    text-align: center
+}
+
+td
+{
+    border: 1px solid black;
+    text-align: center
+}
+
+#tableitems
+{
+    border: 1px solid black;
+}
+ 
